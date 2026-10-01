@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greenhill Food Co-op — Pricing Tests</title>
+
+    <style>
+        body {
+            font-family: "Inter", Arial, sans-serif;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+            color: #1f2937;
+            background: #f7f9fb;
+        }
+
+        h1 { margin-bottom: 4px; }
+
+        .subtitle { color: #6b7280; margin-top: 0; }
+
+        .summary {
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin: 24px 0;
+            font-size: 18px;
+        }
+
+        .summary.pass { background: #e7f6ed; color: #1f7a45; }
+        .summary.fail { background: #fdecec; color: #b42318; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.08);
+        }
+
+        th, td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid #eef1f5;
+            font-size: 14px;
+        }
+
+        th { background: #f2f5f8; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+
+        td.pass { color: #1f7a45; font-weight: 600; }
+        td.fail { color: #b42318; font-weight: 600; }
+    </style>
+</head>
+
+<body>
+
+    <h1>Pricing Tests</h1>
+    <p class="subtitle">
+        Greenhill Food Co-op — unit and weight-based pricing rules.
+        Test values are taken from the Round 33 order form in the case study.
+    </p>
+
+    <div id="summary" class="summary"></div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Test</th>
+                <th>Requirement</th>
+                <th>Description</th>
+                <th>Expected</th>
+                <th>Actual</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody id="resultsBody"></tbody>
+    </table>
+
+    <script src="pricing.js"></script>
+    <script src="tests.js"></script>
+
+</body>
+</html>
