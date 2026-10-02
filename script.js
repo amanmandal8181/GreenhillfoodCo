@@ -365,7 +365,7 @@ function renderProducts() {
                             </strong>
 
                             <span>
-                                per ${product.unit}
+                                ${unitLabel(product)}
                             </span>
 
                         </div>
@@ -548,7 +548,7 @@ function updateCart() {
 
                             <small>
                                 $${product.price.toFixed(2)}
-                                / ${product.unit}
+                                / ${unitLabel(product)}
                             </small>
 
 
@@ -767,8 +767,8 @@ function placeOrder() {
 
                 price: product.price,
 
-                unit: product.unit,
-
+                saleType: product.saleType,
+               
                 quantity: item.quantity,
 
                 total:
@@ -1094,7 +1094,7 @@ function renderCoordinator() {
 
 
                 <td>
-                    ${product.unit}
+                    ${product.saleType === "kg" ? "per kg" : "each"}
                 </td>
 
 
@@ -1362,9 +1362,9 @@ document
                             .value
                     ),
 
-                unit:
+                  saleType:
                     document
-                        .getElementById("productUnit")
+                        .getElementById("productSaleType")
                         .value,
 
                 emoji:
@@ -1472,8 +1472,8 @@ function editProduct(id) {
 
 
     document
-        .getElementById("productUnit")
-        .value = product.unit;
+        .getElementById("productSaleType")
+        .value = product.saleType;
 
 
     document
