@@ -12,89 +12,133 @@ const defaultProducts = [
 
     {
         id: 1,
-        name: "Organic Tomatoes",
-        category: "vegetables",
-        price: 6.50,
-        unit: "kg",
-        emoji: "🍅",
-        description: "Fresh locally grown organic tomatoes.",
+        name: "Rolled Oats, Organic",
+        category: "drygoods",
+        price: 3.40,
+        saleType: "kg",
+        emoji: "🌾",
+        description: "Organic rolled oats, scooped from bulk sacks.",
         active: true
     },
 
     {
         id: 2,
-        name: "Fresh Carrots",
-        category: "vegetables",
-        price: 4.80,
-        unit: "kg",
-        emoji: "🥕",
-        description: "Crunchy farm-fresh carrots.",
+        name: "Brown Rice, Medium Grain",
+        category: "drygoods",
+        price: 4.10,
+        saleType: "kg",
+        emoji: "🍚",
+        description: "Medium grain brown rice from Harvest Belt.",
         active: true
     },
 
     {
         id: 3,
-        name: "Green Broccoli",
-        category: "vegetables",
-        price: 5.90,
-        unit: "kg",
-        emoji: "🥦",
-        description: "Fresh green broccoli from local farms.",
+        name: "Red Lentils, Split",
+        category: "drygoods",
+        price: 4.85,
+        saleType: "kg",
+        emoji: "🫘",
+        description: "Split red lentils, sold by weight.",
         active: true
     },
 
     {
         id: 4,
-        name: "Fresh Apples",
-        category: "fruit",
-        price: 7.20,
-        unit: "kg",
-        emoji: "🍎",
-        description: "Crisp seasonal apples.",
+        name: "Coffee Beans, Whole",
+        category: "drygoods",
+        price: 32.00,
+        saleType: "kg",
+        emoji: "☕",
+        description: "Whole coffee beans, scooped to order.",
         active: true
     },
 
     {
         id: 5,
-        name: "Organic Bananas",
-        category: "fruit",
-        price: 4.50,
-        unit: "kg",
-        emoji: "🍌",
-        description: "Sweet organic bananas.",
+        name: "Raw Almonds",
+        category: "drygoods",
+        price: 18.90,
+        saleType: "kg",
+        emoji: "🌰",
+        description: "Raw almonds from the bulk sack.",
         active: true
     },
 
     {
         id: 6,
-        name: "Farm Fresh Milk",
-        category: "dairy",
-        price: 5.20,
-        unit: "litre",
-        emoji: "🥛",
-        description: "Fresh local dairy milk.",
+        name: "Carrots (Two Creeks)",
+        category: "produce",
+        price: 3.20,
+        saleType: "kg",
+        emoji: "🥕",
+        description: "Carrots delivered Thursday morning.",
         active: true
     },
 
     {
         id: 7,
-        name: "Free Range Eggs",
-        category: "dairy",
-        price: 7.50,
-        unit: "pack",
-        emoji: "🥚",
-        description: "Free range farm eggs.",
+        name: "Pumpkin (Two Creeks)",
+        category: "produce",
+        price: 2.60,
+        saleType: "kg",
+        emoji: "🎃",
+        description: "Whole or cut pumpkin, priced by weight.",
         active: true
     },
 
     {
         id: 8,
-        name: "Sourdough Bread",
-        category: "bakery",
-        price: 6.90,
-        unit: "each",
-        emoji: "🍞",
-        description: "Freshly baked sourdough bread.",
+        name: "Tahini, 375 g Jar",
+        category: "pantry",
+        price: 9.80,
+        saleType: "unit",
+        emoji: "🥜",
+        description: "Unhulled tahini in a 375 gram jar.",
+        active: true
+    },
+
+    {
+        id: 9,
+        name: "Peanut Butter, 500 g Jar",
+        category: "pantry",
+        price: 8.40,
+        saleType: "unit",
+        emoji: "🥜",
+        description: "Smooth peanut butter, 500 gram jar.",
+        active: true
+    },
+
+    {
+        id: 10,
+        name: "Olive Oil, 1 L Tin",
+        category: "pantry",
+        price: 19.60,
+        saleType: "unit",
+        emoji: "🫒",
+        description: "Extra virgin olive oil in a one litre tin.",
+        active: true
+    },
+
+    {
+        id: 11,
+        name: "Eggs, Free Range, Dozen",
+        category: "pantry",
+        price: 7.50,
+        saleType: "unit",
+        emoji: "🥚",
+        description: "Free range eggs, sold by the dozen.",
+        active: true
+    },
+
+    {
+        id: 12,
+        name: "Olive Oil Soap Bar",
+        category: "household",
+        price: 4.20,
+        saleType: "unit",
+        emoji: "🧼",
+        description: "Olive oil soap bar.",
         active: true
     }
 
