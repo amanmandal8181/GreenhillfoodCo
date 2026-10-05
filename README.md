@@ -15,8 +15,8 @@ Built for COMP6012 Managing Information Technology Projects, Assessment 2.
 - Place an order, using whole numbers for products sold by the unit and
   decimal kilograms for products sold by weight
 - Change or cancel an order while the round is open
-- View their own orders only
-
+- View orders placed on this device
+  
 **Coordinator**
 
 - Add, edit and withdraw products, each sold either per unit or per kilogram
@@ -77,7 +77,6 @@ later price change does not alter an existing order.
   orders are not shared between devices.
 - Charges are based on the quantity ordered, not the weight actually packed on
   Thursday. Recording packed weights is in the product backlog.
-- Login is a role selector rather than authenticated accounts with passwords.
 - Ordering rounds are not modelled in software, so the Sunday cutoff is not
   enforced by the application.
 - The coordinator cannot yet see the round totalled by product. This is the
