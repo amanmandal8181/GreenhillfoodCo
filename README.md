@@ -62,7 +62,7 @@ getting wrong:
 
 - **Per unit** — ordered as whole numbers. A dozen eggs at $7.50, ordered 2, is
   $15.00.
-- **Per kilogram** — ordered as decimals. 1.5 kg of oats at $3.40 per kg is
+- **Per kilogram** — ordered as decimals. 1.5 kg of oats at $3.40 per kg is  
   $5.10, and 0.25 kg of coffee at $32.00 per kg is $8.00.
 
 Line totals are rounded to the nearest cent. They are not rounded to the
