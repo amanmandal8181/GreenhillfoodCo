@@ -20,10 +20,7 @@ Built for COMP6012 Managing Information Technology Projects, Assessment 2.
 **Coordinator**
 
 - Add, edit and withdraw products, each sold either per unit or per kilogram
-- Add and deactivate member households
-- Open, close and pack the weekly ordering round
-- View every order in the round
-- View the round totalled by product, to place the wholesale order
+- View every order placed in the current round
 
 ## Running the application
 
@@ -81,6 +78,12 @@ later price change does not alter an existing order.
 - Charges are based on the quantity ordered, not the weight actually packed on
   Thursday. Recording packed weights is in the product backlog.
 - Login is a role selector rather than authenticated accounts with passwords.
+- Ordering rounds are not modelled in software, so the Sunday cutoff is not
+  enforced by the application.
+- The coordinator cannot yet see the round totalled by product. This is the
+  highest-priority item in the remaining product backlog.
+- Orders are not linked to individual member accounts, and there is no member
+  management or login.
 
 ## Out of scope
 
