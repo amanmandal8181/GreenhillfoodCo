@@ -163,6 +163,25 @@ let orders =
 
 
 /* =====================================================
+   HELPERS
+===================================================== */
+
+/* Escape anything typed by a user before putting it in the page. */
+
+function escapeHtml(value) {
+
+    return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
+
+}
+
+
+/* =====================================================
    SAVE DATA
 ===================================================== */
 
@@ -344,15 +363,15 @@ function renderProducts() {
                 <div class="product-body">
 
                     <div class="product-category">
-                        ${product.category}
+                        ${escapeHtml(product.category)}
                     </div>
 
                     <div class="product-name">
-                        ${product.name}
+                        ${escapeHtml(product.name)}
                     </div>
 
                     <div class="product-description">
-                        ${product.description}
+                        ${escapeHtml(product.description)}
                     </div>
 
 
@@ -527,8 +546,7 @@ function updateCart() {
 
 
                 const total =
-                    product.price *
-                    item.quantity;
+                    calculateLineTotal(product, item.quantity);
 
 
                 return `
@@ -543,7 +561,7 @@ function updateCart() {
                         <div class="cart-item-info">
 
                             <strong>
-                                ${product.name}
+                                ${escapeHtml(product.name)}
                             </strong>
 
                             <small>
@@ -555,25 +573,31 @@ function updateCart() {
                             <div class="quantity-controls">
 
                                 <button
-                                    onclick="changeQuantity(
-                                        ${product.id},
-                                        -1
-                                    )"
+                                    onclick="changeQuantity(${product.id}, -1)"
                                 >
                                     −
                                 </button>
 
 
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="${quantityStep(product)}"
+                                    value="${item.quantity}"
+                                    onchange="setQuantity(${product.id}, this.value)"
+                                    style="width:70px;padding:6px;text-align:center;
+                                           border:1px solid #d8dee9;border-radius:8px;
+                                           font-family:inherit;font-size:14px;"
+                                >
+
+
                                 <span>
-                                    ${item.quantity}
+                                    ${product.saleType === "kg" ? "kg" : ""}
                                 </span>
 
 
                                 <button
-                                    onclick="changeQuantity(
-                                        ${product.id},
-                                        1
-                                    )"
+                                    onclick="changeQuantity(${product.id}, 1)"
                                 >
                                     +
                                 </button>
@@ -607,29 +631,87 @@ function updateCart() {
    CHANGE QUANTITY
 ===================================================== */
 
-function changeQuantity(productId, amount) {
+function changeQuantity(productId, direction) {
 
     const item =
-        cart.find(
-            item => item.productId === productId
-        );
+        cart.find(item => item.productId === productId);
 
-    if (!item)
+    const product =
+        products.find(p => p.id === productId);
+
+    if (!item || !product)
         return;
 
 
-    item.quantity += amount;
+    const next =
+        item.quantity + (direction * quantityStep(product));
 
 
-    if (item.quantity <= 0) {
+    setQuantity(
+        productId,
+        product.saleType === "kg"
+            ? roundToGrams(next)
+            : next
+    );
+
+}
+
+
+/* =====================================================
+   SET QUANTITY
+
+   Weighed products accept decimal kilograms.
+   Unit products accept whole numbers only.
+===================================================== */
+
+function setQuantity(productId, value) {
+
+    const item =
+        cart.find(item => item.productId === productId);
+
+    const product =
+        products.find(p => p.id === productId);
+
+    if (!item || !product)
+        return;
+
+
+    const amount = Number(value);
+
+
+    if (isNaN(amount) || amount <= 0) {
 
         cart =
             cart.filter(
-                item =>
-                    item.productId !== productId
+                entry => entry.productId !== productId
             );
 
+        saveData();
+
+        updateCart();
+
+        return;
+
     }
+
+
+    if (!isValidQuantity(product, amount)) {
+
+        showToast(
+            `${product.name} is sold each — please use whole numbers`
+        );
+
+        updateCart();
+
+        return;
+
+    }
+
+
+    item.quantity =
+        product.saleType === "kg"
+            ? roundToGrams(amount)
+            : amount;
 
 
     saveData();
@@ -647,8 +729,6 @@ function updateCartTotals() {
 
     let total = 0;
 
-    let quantity = 0;
-
 
     cart.forEach(item => {
 
@@ -662,18 +742,17 @@ function updateCartTotals() {
 
 
         total +=
-            product.price *
-            item.quantity;
-
-
-        quantity += item.quantity;
+            calculateLineTotal(product, item.quantity);
 
     });
 
 
+    total = roundToCents(total);
+
+
     document
         .getElementById("cartCount")
-        .textContent = quantity;
+        .textContent = cart.length;
 
 
     document
@@ -772,8 +851,10 @@ function placeOrder() {
                 quantity: item.quantity,
 
                 total:
-                    product.price *
-                    item.quantity
+                    calculateLineTotal(
+                        product,
+                        item.quantity
+                    )
 
             };
 
@@ -781,11 +862,7 @@ function placeOrder() {
 
 
     const total =
-        items.reduce(
-            (sum, item) =>
-                sum + item.total,
-            0
-        );
+        calculateOrderTotal(items);
 
 
     const order = {
@@ -914,13 +991,14 @@ function renderOrders() {
                             <div class="order-item-info">
 
                                 <strong>
-                                    ${item.name}
+                                    ${escapeHtml(item.name)}
                                 </strong>
 
                                 <span>
-                                    ${item.quantity}
+                                    ${quantityLabel(item, item.quantity)}
                                     ×
                                     $${item.price.toFixed(2)}
+                                    ${unitLabel(item)}
                                 </span>
 
                             </div>
@@ -990,28 +1068,221 @@ function renderOrders() {
    CHANGE ORDER
 ===================================================== */
 
+let editingOrderId = null;
+
+let editingItems = [];
+
+
 function changeOrder(orderId) {
 
     const order =
-        orders.find(
-            o => o.id === orderId
-        );
+        orders.find(o => o.id === orderId);
 
     if (!order)
         return;
 
 
-    order.status =
-        "Change requested";
+    editingOrderId = orderId;
+
+
+    /* Work on a copy so "Keep Current Order" really keeps it. */
+
+    editingItems =
+        order.items.map(item => ({ ...item }));
+
+
+    renderOrderEditItems();
+
+
+    document
+        .getElementById("orderEditModal")
+        .classList.add("show");
+
+}
+
+
+function renderOrderEditItems() {
+
+    const container =
+        document.getElementById("orderEditItems");
+
+
+    if (editingItems.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty-cart" style="height:160px">
+                <strong>No items left</strong>
+                <p>Saving now will cancel this order.</p>
+            </div>
+        `;
+
+    } else {
+
+        container.innerHTML =
+
+            editingItems.map(item => `
+
+                <div class="order-item">
+
+                    <div class="order-item-icon">
+                        ${item.emoji}
+                    </div>
+
+                    <div class="order-item-info">
+
+                        <strong>
+                            ${escapeHtml(item.name)}
+                        </strong>
+
+                        <span>
+                            $${item.price.toFixed(2)}
+                            ${unitLabel(item)}
+                        </span>
+
+                    </div>
+
+                    <input
+                        type="number"
+                        min="0"
+                        step="${quantityStep(item)}"
+                        value="${item.quantity}"
+                        onchange="updateEditQuantity(${item.productId}, this.value)"
+                        style="width:70px;padding:6px;text-align:center;
+                               border:1px solid #d8dee9;border-radius:8px;
+                               font-family:inherit;font-size:14px;margin-right:10px;"
+                    >
+
+                    <button
+                        class="small-btn danger"
+                        onclick="removeEditItem(${item.productId})"
+                    >
+                        Remove
+                    </button>
+
+                </div>
+
+            `).join("");
+
+    }
+
+
+    document
+        .getElementById("orderEditTotal")
+        .textContent =
+            `$${calculateOrderTotal(editingItems).toFixed(2)}`;
+
+}
+
+
+function updateEditQuantity(productId, value) {
+
+    const item =
+        editingItems.find(i => i.productId === productId);
+
+    if (!item)
+        return;
+
+
+    const amount = Number(value);
+
+
+    if (isNaN(amount) || amount <= 0) {
+
+        removeEditItem(productId);
+
+        return;
+
+    }
+
+
+    if (!isValidQuantity(item, amount)) {
+
+        showToast(
+            `${item.name} is sold each — please use whole numbers`
+        );
+
+        renderOrderEditItems();
+
+        return;
+
+    }
+
+
+    item.quantity =
+        item.saleType === "kg"
+            ? roundToGrams(amount)
+            : amount;
+
+    item.total =
+        calculateLineTotal(item, item.quantity);
+
+
+    renderOrderEditItems();
+
+}
+
+
+function removeEditItem(productId) {
+
+    editingItems =
+        editingItems.filter(
+            item => item.productId !== productId
+        );
+
+    renderOrderEditItems();
+
+}
+
+
+function saveOrderChanges() {
+
+    const order =
+        orders.find(o => o.id === editingOrderId);
+
+    if (!order)
+        return;
+
+
+    if (editingItems.length === 0) {
+
+        order.status = "Cancelled";
+
+        showToast("Order cancelled — all items were removed");
+
+    } else {
+
+        order.items = editingItems;
+
+        order.total = calculateOrderTotal(editingItems);
+
+        order.updated =
+            new Date().toLocaleDateString();
+
+        showToast(`Order ${order.id} updated`);
+
+    }
 
 
     saveData();
 
+    closeOrderEditModal();
+
     renderOrders();
 
-    showToast(
-        "Order change request submitted"
-    );
+    updateStatistics();
+
+}
+
+
+function closeOrderEditModal() {
+
+    document
+        .getElementById("orderEditModal")
+        .classList.remove("show");
+
+    editingOrderId = null;
+
+    editingItems = [];
 
 }
 
@@ -1023,16 +1294,15 @@ function changeOrder(orderId) {
 function cancelOrder(orderId) {
 
     const order =
-        orders.find(
-            o => o.id === orderId
-        );
+        orders.find(o => o.id === orderId);
 
     if (!order)
         return;
 
 
-    order.status =
-        "Cancelled";
+    /* The order is kept for the records, marked as cancelled. */
+
+    order.status = "Cancelled";
 
 
     saveData();
@@ -1042,7 +1312,7 @@ function cancelOrder(orderId) {
     updateStatistics();
 
     showToast(
-        "Order cancelled"
+        `Order ${order.id} cancelled`
     );
 
 }
@@ -1236,12 +1506,12 @@ function renderCoordinatorOrders() {
                             <div class="order-item-info">
 
                                 <strong>
-                                    ${item.name}
+                                    ${escapeHtml(item.name)}
                                 </strong>
 
                                 <span>
                                     Quantity:
-                                    ${item.quantity}
+                                    ${quantityLabel(item, item.quantity)}
                                 </span>
 
                             </div>
@@ -1549,7 +1819,9 @@ function updateStatistics() {
     document
         .getElementById("orderCount")
         .textContent =
-            orders.length;
+            orders.filter(
+                order => order.status !== "Cancelled"
+            ).length;
 
 }
 
@@ -1588,7 +1860,9 @@ function updateCoordinatorStats() {
             "coordOrderCount"
         )
         .textContent =
-            orders.length;
+            orders.filter(
+                order => order.status !== "Cancelled"
+            ).length;
 
 
     document
