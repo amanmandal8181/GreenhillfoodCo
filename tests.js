@@ -101,7 +101,12 @@ check("T11", "US02", "Order total is the sum of its line totals",
 
 check("T12", "US12", "Totals are not rounded to the nearest ten cents",
     5.37, roundToCents(5.372));
-
+    
+check("T13", "US02", "An order containing one line item returns the correct total",
+    5.10,
+    calculateOrderTotal([
+        { total: calculateLineTotal(oats, 1.5) }
+    ]));
 
 /* --- Reporting --- */
 
