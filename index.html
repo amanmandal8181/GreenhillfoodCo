@@ -194,25 +194,29 @@
             </div>
 
 
-                      <select id="productCategory">
+            <div class="category-bar">
 
-                            <option value="drygoods">
-                                Dry Goods
-                            </option>
+                <button class="category active" data-category="all">
+                    All Products
+                </button>
 
-                            <option value="produce">
-                                Fruit &amp; Vegetables
-                            </option>
+                <button class="category" data-category="drygoods">
+                    Dry Goods
+                </button>
 
-                            <option value="pantry">
-                                Pantry
-                            </option>
+                <button class="category" data-category="produce">
+                    Fruit &amp; Vegetables
+                </button>
 
-                            <option value="household">
-                                Household
-                            </option>
+                <button class="category" data-category="pantry">
+                    Pantry
+                </button>
 
-                        </select>
+                <button class="category" data-category="household">
+                    Household
+                </button>
+
+            </div>
 
 
             <div id="productGrid" class="product-grid"></div>
@@ -331,7 +335,7 @@
                                 <th>Product</th>
                                 <th>Category</th>
                                 <th>Price</th>
-                                <th>Unit</th>
+                                <th>Sold</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -478,7 +482,7 @@
                     <div class="form-group full">
                         <label>Product Name</label>
 
-                        <input type="text" id="productName" placeholder="e.g. Organic Tomatoes" required>
+                        <input type="text" id="productName" placeholder="e.g. Rolled Oats" required>
                     </div>
 
 
@@ -488,20 +492,20 @@
 
                         <select id="productCategory">
 
-                            <option value="vegetables">
-                                Vegetables
+                            <option value="drygoods">
+                                Dry Goods
                             </option>
 
-                            <option value="fruit">
-                                Fruit
+                            <option value="produce">
+                                Fruit &amp; Vegetables
                             </option>
 
-                            <option value="dairy">
-                                Dairy
+                            <option value="pantry">
+                                Pantry
                             </option>
 
-                            <option value="bakery">
-                                Bakery
+                            <option value="household">
+                                Household
                             </option>
 
                         </select>
